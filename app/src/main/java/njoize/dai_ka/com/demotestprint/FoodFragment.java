@@ -124,7 +124,9 @@ public class FoodFragment extends Fragment {
     private void increaseOrDecrease(final String idSQLit) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle("Increase or Decrease").setMessage("Please Click Button").setPositiveButton("Increase", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setTitle("Increase or Decrease")
+                .setMessage("Please Click Button")
+                .setPositiveButton("Increase", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 toolIncDec(idSQLit,true);
             }
@@ -148,6 +150,25 @@ public class FoodFragment extends Fragment {
         Log.d("25decV4", "Current Amount ==> " + amountString);
 
         int amountInt = Integer.parseInt(amountString);
+        cursor.close();
+
+        if (status) {
+//            Increase Status
+            amountInt += 1;
+            sqLiteDatabase.execSQL("UPDATE orderTABLE SET Amount=" + "'" + Integer.toString(amountInt) + "'" + " WHERE id=" + "'" + idSQLite + "'");
+            checkOrder();
+        } else {
+//            Decrease Status
+            if (amountInt == 1) {
+                sqLiteDatabase.delete("orderTABLE", "id" + "=" + idSQLite, null);
+                checkOrder();
+            } else {
+                amountInt -= 1;
+                sqLiteDatabase.execSQL("UPDATE orderTABLE SET Amount=" + "'" + Integer.toString(amountInt) + "'" + " WHERE id=" + "'" + idSQLite + "'");
+                checkOrder();
+            }
+
+        }
 
 
     }
