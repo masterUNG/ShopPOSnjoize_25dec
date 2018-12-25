@@ -89,13 +89,27 @@ public class FoodFragment extends Fragment {
 
                 priceSumStringArrayList.add(Integer.toString(priceInt * amountInt));
 
+                cursor.moveToNext();
             }   // for
 
             cursor.close();
 
             Log.d("25decV2", "nameFood ==> " + nameFoodStringArrayList.toString());
 
+            RecyclerView recyclerView = getView().findViewById(R.id.recyclerOrder);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),
+                    LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(linearLayoutManager);
 
+            OrderAdapter orderAdapter = new OrderAdapter(getActivity(), nameFoodStringArrayList, amounStringArrayList,
+                    priceSumStringArrayList, new OnClickItem() {
+                @Override
+                public void onClickItem(View view, int positions) {
+
+                }
+            });
+
+            recyclerView.setAdapter(orderAdapter);
 
 
 
