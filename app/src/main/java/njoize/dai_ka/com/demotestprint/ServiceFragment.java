@@ -20,6 +20,16 @@ public class ServiceFragment extends Fragment {
     private ViewPager viewPager;
     private MyConstant myConstant = new MyConstant();
 
+    private int postionAnInt = 1;
+
+    public static ServiceFragment serviceInstant(int positionInt) {
+        ServiceFragment serviceFragment = new ServiceFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("Position", positionInt);
+        serviceFragment.setArguments(bundle);
+        return serviceFragment;
+    }
+
 
     public ServiceFragment() {
         // Required empty public constructor
@@ -29,6 +39,8 @@ public class ServiceFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        postionAnInt = getArguments().getInt("Position", 1);
 
 //        Create TabLayout
         createTabLayout();
@@ -48,7 +60,7 @@ public class ServiceFragment extends Fragment {
         viewPager.setAdapter(myPagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(postionAnInt);
 
     }
 

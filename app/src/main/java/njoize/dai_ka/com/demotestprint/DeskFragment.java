@@ -265,10 +265,12 @@ public class DeskFragment extends Fragment implements View.OnClickListener {
                     Log.d("24decV2", "Amunt ==> " + amountCustomerString);
                     Log.d("24decV2", "totalBill ==> " + totalBill);
 
-                    Intent intent = new Intent(getActivity(), FoodActivity.class);
-                    intent.putExtra("Amount", amountCustomerString);
-                    intent.putExtra("Bill", totalBill);
-                    startActivity(intent);
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.contentServiceFragment, ServiceFragment.serviceInstant(2))
+                            .commit();
+
+
 
 
                 }

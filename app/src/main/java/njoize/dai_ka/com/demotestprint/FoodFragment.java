@@ -68,7 +68,23 @@ public class FoodFragment extends Fragment {
 //        Cancel Controller
         cancelController();
 
+//        Order Controller
+        orderController();
+
     }   // Main Method
+
+    private void orderController() {
+        Button button = getView().findViewById(R.id.btnOrder);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+
+            }
+        });
+    }
 
     private void cancelController() {
         Button button = getView().findViewById(R.id.btnCancel);
@@ -361,8 +377,8 @@ public class FoodFragment extends Fragment {
     private void receiveValue() {
         amountCustomerString = getArguments().getString("Amount");
         totalBillABoolean = getArguments().getBoolean("Bill");
-        Log.d("24decV3", "amount ==> " + amountCustomerString);
-        Log.d("24decV3", "Bill ==> " + totalBillABoolean);
+        Log.d("2janV1", "amount ==> " + amountCustomerString);
+        Log.d("2janV1", "Bill ==> " + totalBillABoolean);
     }
 
     @Override
