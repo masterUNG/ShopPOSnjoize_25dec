@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 public class FoodFragment extends Fragment {
 
     //    Explicit
-    private String amountCustomerString;
+    private String amountCustomerString, tidString, tnameString;
     private boolean totalBillABoolean;
     private String idCategoryClick;
     private MyManageSQLite myManageSQLite;
@@ -39,11 +40,16 @@ public class FoodFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static FoodFragment foodInstante(String amountCustomer, boolean totalBill) {
+    public static FoodFragment foodInstante(String amountCustomer,
+                                            boolean totalBill,
+                                            String tidString,
+                                            String tnameString) {
 
         FoodFragment foodFragment = new FoodFragment();
         Bundle bundle = new Bundle();
         bundle.putString("Amount", amountCustomer);
+        bundle.putString("Tid", tidString);
+        bundle.putString("Tname", tnameString);
         bundle.putBoolean("Bill", totalBill);
         foodFragment.setArguments(bundle);
         return foodFragment;
@@ -78,8 +84,6 @@ public class FoodFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
 
             }
@@ -121,6 +125,8 @@ public class FoodFragment extends Fragment {
             ArrayList<String> priceSumStringArrayList = new ArrayList<>();
             final ArrayList<String> idSQLiteStringArrayList = new ArrayList<>();
 
+            int totalAInt = 0;
+
             for (int i = 0; i < cursor.getCount(); i += 1) {
 
                 nameFoodStringArrayList.add(cursor.getString(2));
@@ -131,6 +137,8 @@ public class FoodFragment extends Fragment {
                 int amountInt = Integer.parseInt(amounStringArrayList.get(i));
 
                 priceSumStringArrayList.add(Integer.toString(priceInt * amountInt));
+
+                totalAInt = totalAInt + (priceInt * amountInt);
 
                 cursor.moveToNext();
             }   // for
@@ -154,7 +162,9 @@ public class FoodFragment extends Fragment {
 
             recyclerView.setAdapter(orderAdapter);
 
-
+//            Show AmountPrice
+            TextView textView = getView().findViewById(R.id.txtTotal);
+            textView.setText("Total: " + Integer.toString(totalAInt) + " THB");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,15 +177,14 @@ public class FoodFragment extends Fragment {
         alertDialogBuilder.setTitle("Increase or Decrease")
                 .setMessage("Please Click Button")
                 .setPositiveButton("Increase", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        toolIncDec(idSQLit, true);
+                    }
+                }).setNegativeButton("Decrease", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                toolIncDec(idSQLit,true);
-            }
-        }).setNegativeButton("Decrease", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                toolIncDec(idSQLit,false);
+                toolIncDec(idSQLit, false);
             }
         }).show();
-
 
 
     }
@@ -375,10 +384,51 @@ public class FoodFragment extends Fragment {
     }
 
     private void receiveValue() {
+
         amountCustomerString = getArguments().getString("Amount");
+        tidString = getArguments().getString("Tid");
+        tnameString = getArguments().getString("Tname");
         totalBillABoolean = getArguments().getBoolean("Bill");
-        Log.d("2janV1", "amount ==> " + amountCustomerString);
-        Log.d("2janV1", "Bill ==> " + totalBillABoolean);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("OrderFood", Context.MODE_PRIVATE);
+        amountCustomerString = sharedPreferences.getString("Amount", "");
+        tidString = sharedPreferences.getString("Tid", "");
+        tnameString = sharedPreferences.getString("Tname", "");
+        totalBillABoolean = sharedPreferences.getBoolean("Total", true);
+
+
+        Log.d("2janV1", "amount รับ Food ==> " + amountCustomerString);
+        Log.d("2janV1", "Tid รับ Food ==> " + tidString);
+        Log.d("2janV1", "Tname รับ Food ==> " + tnameString);
+        Log.d("2janV1", "Bill รับ Food ==> " + totalBillABoolean);
+
+//        Show Desk
+        TextView deskTextView = getView().findViewById(R.id.txtDesk);
+        deskTextView.setText("Desk: " + tnameString);
+
+//        Show Zone
+        TextView zoneTextView = getView().findViewById(R.id.txtZone);
+        zoneTextView.setText("Zone: x");
+
+//        Show Amount User
+        TextView amountTextView = getView().findViewById(R.id.txtAmountUser);
+        amountTextView.setText("Amount: " + amountCustomerString);
+
+//        Show Total Bill
+        TextView totalTextView = getView().findViewById(R.id.txtTotalBill);
+        totalTextView.setText("Bill: " + findTotalText(totalBillABoolean));
+
+
+    }
+
+    private String findTotalText(boolean totalBillABoolean) {
+
+        String result = "ไม่รวมบิล";
+        if (totalBillABoolean) {
+            result = "รวมบิล";
+        }
+
+        return result;
     }
 
     @Override
