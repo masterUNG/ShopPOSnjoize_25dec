@@ -93,6 +93,7 @@ public class DeskFragment extends Fragment implements View.OnClickListener {
         textView.setLayoutParams(layoutParams);
 
 
+
 //        int factor = 12 * deskFactor;
 //        int factor2 = 2;
 
