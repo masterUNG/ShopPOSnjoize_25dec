@@ -46,6 +46,7 @@ public class BillDetailFragment extends Fragment {
 
 
     private String idBillString, timeString, cnumString, typeString, nameString, zoneString, deskString;
+    private String tidString;
     private String tag = "2decV2";
     private MyConstant myConstant = new MyConstant();
 
@@ -60,7 +61,7 @@ public class BillDetailFragment extends Fragment {
                                                         String typeString,
                                                         String nameString,
                                                         String zoneString,
-                                                        String deskString) {
+                                                        String deskString, String tidString) {
 
         BillDetailFragment billDetailFragment = new BillDetailFragment();
         Bundle bundle = new Bundle();
@@ -71,6 +72,7 @@ public class BillDetailFragment extends Fragment {
         bundle.putString("name", nameString);
         bundle.putString("Zone", zoneString);
         bundle.putString("Desk", deskString);
+        bundle.putString("tid", tidString);
         billDetailFragment.setArguments(bundle);
         return billDetailFragment;
     }
@@ -202,6 +204,7 @@ public class BillDetailFragment extends Fragment {
         nameString = getArguments().getString("name");
         zoneString = getArguments().getString("Zone");
         deskString = getArguments().getString("Desk");
+        tidString = getArguments().getString("tid");
         Log.d(tag, "idBill ==> " + idBillString);
     }
 
@@ -641,7 +644,7 @@ public class BillDetailFragment extends Fragment {
                                 String moneyCouponString) {
 
         String tag = "3janV1";
-        String statusCash = changeBoolToString(cashBool);
+        final String statusCash = changeBoolToString(cashBool);
         String statusCredit = changeBoolToString(creditBool);
         String statusCoupon = changeBoolToString(couponBool);
 
@@ -677,8 +680,29 @@ public class BillDetailFragment extends Fragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("PayBack").setMessage("Your PayBack Money = " + Integer.toString(payBackCustomer)).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                getActivity().finish();
-                dialog.dismiss();
+
+                try {
+
+//                    Upload Data To Server
+                    String oid = idBillString;
+                    String tid = tidString;
+                    String user = nameString;
+                    String payment = statusCash;
+
+                    PaybackThread paybackThread = new PaybackThread(getActivity());
+                    paybackThread.execute(oid, tid, user, payment, myConstant.getUrlPaymentOrder());
+
+                    String result = paybackThread.get();
+
+                    getActivity().finish();
+                    dialog.dismiss();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
             }
         }).show();
 
